@@ -7,6 +7,7 @@
 #include <thread>
 
 #include "server.h"
+#include "utils.h"
 
 constexpr std::string_view kSocketName = "/tmp/leaf/9Lq7BNBnBycd6nxy.socket";
 
@@ -40,12 +41,12 @@ int main() try {
     thread.join();
   }
 
-  std::cout << "Goodbye, my friend, goodbye\n";
+  Println(std::cout, "Goodbye, my friend, goodbye");
   return EXIT_SUCCESS;
 } catch (const std::exception& e) {
-  std::cerr << e.what() << '\n';
+  Println(std::cerr, e.what());
   return EXIT_FAILURE;
 } catch (...) {
-  std::cerr << "Oops! Something went wrong." << '\n';
+  Println(std::cerr, "Oops! Something went wrong.");
   return EXIT_FAILURE;
 }

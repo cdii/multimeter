@@ -1,6 +1,5 @@
 ﻿#include "socket.h"
 
-#include <fcntl.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <unistd.h>
@@ -10,7 +9,6 @@
 #include <cerrno>
 #include <cstring>
 #include <filesystem>
-#include <iostream>
 
 using namespace std::string_literals;
 
@@ -19,7 +17,7 @@ Socket::Socket() : socket_(::socket(AF_UNIX, SOCK_STREAM, 0)) {
     throw SocketException("Failed to create socket: "s + std::strerror(errno));
   }
 }
-Socket::~Socket() { Shutdown(); }
+Socket::~Socket() { Close(); }
 
 Socket::Socket(const int socket) : socket_(socket) {}
 
@@ -72,19 +70,19 @@ Socket Socket::Accept() const {
   return Socket(socket);
 }
 
-void Socket::Shutdown() {
+void Socket::Close() {
   if (socket_ != -1) {
     ::close(socket_);
     socket_ = -1;
   }
 }
 
-std::string Socket::ReadLine() const {
+std::string Socket::ReadLine(const int sockfd) {
   std::string buffer;
 
   while (true) {
     char byte = 0;
-    const auto num_bytes = ::read(socket_, &byte, 1);
+    const auto num_bytes = ::read(sockfd, &byte, 1);
 
     if (num_bytes == -1) {
       if (errno == EINTR) {
@@ -113,10 +111,12 @@ std::string Socket::ReadLine() const {
   return buffer;
 }
 
-void Socket::Send(const std::string_view message) const {
-  if (::send(socket_, message.data(), message.size(), 0) == -1) {
+void Socket::Send(const int sockfd, const std::string_view message) {
+  if (::send(sockfd, message.data(), message.size(), 0) == -1) {
     throw SocketException("Failed to send message: "s + std::strerror(errno));
   }
 }
+
+void Socket::Shutdown(const int sockfd) { ::shutdown(sockfd, SHUT_RDWR); }
 
 int Socket::GetSockfd() const { return socket_; }

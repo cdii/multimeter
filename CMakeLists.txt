@@ -11,13 +11,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt5 REQUIRED COMPONENTS Core Quick Network)
 
+set(sanitizer_options "-fsanitize=thread")
+
 add_executable(server
   server.cpp
   server.h
   server_main.cpp
   socket.cpp
   socket.h
+  utils.h
 )
+target_compile_options(server PRIVATE ${sanitizer_options})
+target_link_libraries(server PRIVATE ${sanitizer_options})
 
 add_executable(client
   client.cpp

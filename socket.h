@@ -18,9 +18,12 @@ public:
   void Bind(std::string_view path) const;
   void Listen() const;
   Socket Accept() const;
-  void Shutdown();
-  std::string ReadLine() const;
-  void Send(std::string_view message) const;
+  void Close();
+
+  static std::string ReadLine(int sockfd);
+  static void Send(int sockfd, std::string_view message);
+  static void Shutdown(int sockfd);
+
   int GetSockfd() const;
 
 private:
