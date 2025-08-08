@@ -86,3 +86,6 @@ std::string GetResultCommand::Execute(
 1. Оптимизация чтения данных
 
    Метод Socket::ReadLine можно оптимизировать, реализовав буферизированное чтение с возможностью частичного считывания строки.
+
+### Возможный внешний вид клиента:
+![alt text](https://github.com/cdii/multimeter/blob/dev/prototype.png "Client")
